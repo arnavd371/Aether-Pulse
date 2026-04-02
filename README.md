@@ -1,10 +1,9 @@
-# 🫀 Aether-Pulse — Clinical Decision Support System (CDSS)
+# Aether-Pulse: Clinical Decision Support System (CDSS)
 
-Aether-Pulse is a hybrid rule-based + machine-learning medication safety checker
+Aether Pulse is a hybrid rule based + machine-learning medication safety checker
 designed to assist clinicians in identifying potentially dangerous prescriptions
 before they reach the patient.
 
----
 
 ## Architecture Overview
 
@@ -58,7 +57,7 @@ Aether-Pulse/
 └── README.md
 ```
 
----
+
 
 ## Setup Instructions
 
@@ -82,7 +81,6 @@ source venv/bin/activate   # Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
----
 
 ## Training (Google Colab)
 
@@ -119,7 +117,7 @@ python src/ml_model/evaluate.py \
     --output_dir eval_outputs/
 ```
 
----
+
 
 ## Running the API
 
@@ -134,7 +132,7 @@ export AETHER_MODEL_PATH=/path/to/model.pkl
 uvicorn src.api.app:app --reload
 ```
 
----
+
 
 ## API Usage
 
@@ -200,7 +198,7 @@ curl -X POST http://localhost:8000/check-medication \
 - **Google Colab compatible** — no local-only dependencies; relative paths used throughout.
 - **Python 3.10+** required.
 
----
+
 
 ## Team
 
