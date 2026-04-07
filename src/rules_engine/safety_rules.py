@@ -19,6 +19,8 @@ ALLERGY_CONTRAINDICATIONS: dict[str, set[str]] = {
     "aspirin": {"ibuprofen", "naproxen", "indomethacin", "ketorolac"},
     "codeine": {"codeine", "morphine", "hydrocodone", "oxycodone"},
     "contrast": {"iodine"},
+    "cephalosporin": {"amoxicillin", "ampicillin", "penicillin"},
+    "nsaid": {"aspirin", "ibuprofen", "naproxen", "diclofenac"},
 }
 
 # ---------------------------------------------------------------------------
@@ -62,6 +64,22 @@ DDI_TABLE: dict[frozenset[str], dict[str, Any]] = {
         "reason": "Clopidogrel + Omeprazole: reduced antiplatelet effect",
         "severity": "medium",
     },
+        frozenset({"sildenafil", "nitroglycerin"}): {
+        "reason": "SEVERE: Sildenafil + Nitrates can cause life-threatening hypotension",
+        "severity": "high",
+    },
+    frozenset({"tramadol", "fluoxetine"}): {
+        "reason": "Tramadol + SSRI (Fluoxetine): high risk of rare Serotonin Syndrome",
+        "severity": "high",
+    },
+    frozenset({"clarithromycin", "simvastatin"}): {
+        "reason": "Clarithromycin + Simvastatin: risk of severe myopathy/rhabdomyolysis",
+        "severity": "high",
+    },
+    frozenset({"spironolactone", "lisinopril"}): {
+        "reason": "Combining potassium-sparing diuretics: risk of fatal hyperkalemia",
+        "severity": "high",
+    },
 }
 
 # ---------------------------------------------------------------------------
@@ -75,6 +93,9 @@ AGE_CONTRAINDICATIONS: dict[str, list[tuple[Any, Any, str, str]]] = {
     "fluoroquinolone": [(None, 18, "Fluoroquinolones in children <18 years: risk of tendinopathy", "medium")],
     "metformin": [(None, 10, "Metformin not recommended in children <10 years", "medium")],
     "warfarin": [(None, 0, "Warfarin generally contraindicated in neonates without specialist review", "high")],
+    "codeine": [(None, 12, "FDA Warning: Codeine contraindicated in children <12 due to respiratory depression", "high")],
+    "promethazine": [(None, 2, "FDA Black Box: Promethazine contraindicated in children <2 years due to fatal respiratory depression", "high")],
+    "ibuprofen": [(None, 0.5, "Ibuprofen not recommended for infants under 6 months", "medium")],
 }
 
 # ---------------------------------------------------------------------------
@@ -102,6 +123,8 @@ RENAL_SENSITIVE_DRUGS: dict[str, dict[str, Any]] = {
     "lithium": {"threshold": 1.5, "reason": "Lithium toxic in renal impairment — close monitoring required", "severity": "high"},
     "nsaid": {"threshold": 1.5, "reason": "NSAIDs may worsen renal function in impaired patients", "severity": "medium"},
     "vancomycin": {"threshold": 1.5, "reason": "Vancomycin requires dose adjustment in renal impairment", "severity": "medium"},
+    "spironolactone": {"threshold": 2.0, "reason": "Spironolactone contraindicated in severe renal impairment — hyperkalemia risk", "severity": "high"},
+    "ibuprofen": {"threshold": 1.2, "reason": "NSAIDs can worsen existing renal impairment", "severity": "high"},
 }
 
 HEPATIC_SENSITIVE_DRUGS: dict[str, dict[str, Any]] = {
@@ -111,6 +134,8 @@ HEPATIC_SENSITIVE_DRUGS: dict[str, dict[str, Any]] = {
     "methotrexate": {"alt_threshold": 40, "reason": "Methotrexate hepatotoxic — contraindicated in hepatic impairment", "severity": "high"},
     "isoniazid": {"alt_threshold": 40, "reason": "Isoniazid hepatotoxic — requires liver function monitoring", "severity": "medium"},
     "ketoconazole": {"alt_threshold": 40, "reason": "Ketoconazole hepatotoxic — avoid in hepatic disease", "severity": "high"},
+    "valproic acid": {"alt_threshold": 60, "reason": "Valproic acid is hepatotoxic and contraindicated in hepatic disease", "severity": "high"},
+    "amiodarone": {"alt_threshold": 100, "reason": "Amiodarone can cause severe hepatic injury; monitor closely", "severity": "high"},
 }
 
 
