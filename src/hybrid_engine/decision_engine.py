@@ -79,18 +79,12 @@ class DecisionEngine:
         self._preprocessor = artefact["preprocessor"]
 
     # ------------------------------------------------------------------
-    def _patient_to_dataframe(
+  def _patient_to_dataframe(
         self,
         patient: dict[str, Any],
         medication: str,
         dose_mg: float | None,
     ) -> pd.DataFrame:
-        """
-        Convert a patient profile dict to a single-row DataFrame suitable for
-        the preprocessor.
-
-        The medication and dose are included as extra context columns.
-        """
         row = {
             "age": patient.get("age", 0),
             "weight_kg": patient.get("weight_kg", 0),
@@ -100,6 +94,9 @@ class DecisionEngine:
             "current_medications": ", ".join(patient.get("current_medications", [])),
             "creatinine": patient.get("creatinine", 1.0),
             "alt": patient.get("alt", 20.0),
+            # ADD THESE:
+            "Recommended_Medication": medication,
+            "Dosage": dose_mg if dose_mg else 0
         }
         return pd.DataFrame([row])
 
