@@ -42,7 +42,7 @@ matplotlib.use("Agg")  # non-interactive backend (Colab / headless)
 # Evaluation helpers
 # ---------------------------------------------------------------------------
 
-def _find_recall_optimised_threshold(y_true: np.ndarray, y_proba: np.ndarray, min_precision: float = 0.4) -> float:
+def _find_recall_optimised_threshold(y_true: np.ndarray, y_proba: np.ndarray, min_precision: float = 0.7) -> float:
     """
     Find the probability threshold that maximises recall while keeping
     precision above *min_precision*.
