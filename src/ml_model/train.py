@@ -54,10 +54,10 @@ PARAM_GRID = {
 # Optuna objective (optional — used when --tuner optuna is passed)
 # ---------------------------------------------------------------------------
 
-def _optuna_objective(trial, X: np.ndarray, y: np.ndarray, cv: StratifiedKFold) -> float:
+def _optuna_objective(trial, X: np.ndarray, y: np.ndarray, cv: StratifiedKFold, spw: float) -> float:
     """Optuna objective: maximise mean cross-validated AUC-ROC."""
     import optuna  # noqa: PLC0415 — optional import
-
+    
     params = {
         "n_estimators": trial.suggest_int("n_estimators", 100, 500, step=100),
         "max_depth": trial.suggest_int("max_depth", 3, 7),
@@ -67,6 +67,7 @@ def _optuna_objective(trial, X: np.ndarray, y: np.ndarray, cv: StratifiedKFold) 
         "use_label_encoder": False,
         "eval_metric": "logloss",
         "random_state": 42,
+        "scale_pos_weight": spw,
     }
 
     model = XGBClassifier(**params)
@@ -115,7 +116,11 @@ def train(
     y = df[label_col].astype(int).to_numpy()
     X_raw = df.drop(columns=[label_col])
 
-    print(f"[Aether-Pulse] Dataset shape: {df.shape}  |  Class balance: {np.bincount(y)}")
+    n_safe = (y == 0).sum()
+    n_dangerous = (y == 1).sum()
+    spw = float(n_safe / n_dangerous) if n_dangerous > 0 else 1.0
+    print(f"[Aether-Pulse] Dataset shape: {df.shape}  |  Class balance: Safe={n_safe}, Dangerous={n_dangerous}")
+    print(f"[Aether-Pulse] Dynamic scale_pos_weight applied: {spw:.2f}")
 
     # Preprocessing
     preprocessor = MedicationPreprocessor()
@@ -131,12 +136,12 @@ def train(
             optuna.logging.set_verbosity(optuna.logging.WARNING)
             study = optuna.create_study(direction="maximize")
             study.optimize(
-                lambda trial: _optuna_objective(trial, X, y, cv),
+                lambda trial: _optuna_objective(trial, X, y, cv, spw),
                 n_trials=n_trials,
                 show_progress_bar=False,
             )
             best_params = study.best_params
-            best_params.update({"use_label_encoder": False, "eval_metric": "logloss", "random_state": 42})
+            best_params.update({"use_label_encoder": False, "eval_metric": "logloss", "random_state": 42, "scale_pos_weight": spw})
             print(f"[Aether-Pulse] Best Optuna params: {best_params}")
             best_model = XGBClassifier(**best_params)
         except ImportError:
@@ -148,6 +153,7 @@ def train(
             use_label_encoder=False,
             eval_metric="logloss",
             random_state=42,
+            scale_pos_weight=spw,
         )
         search = GridSearchCV(
             base_model,
